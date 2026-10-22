@@ -55,7 +55,9 @@ public static class UpdateFlows
 
         try
         {
-            var progress = new Progress<int>(p => services.SetStatus($"Baixando a versão {version}… {p}%"));
+            Action<int> progress = p =>
+                services.SetStatus($"Baixando a versão {version}… {p}%");
+
             await services.Updates.DownloadAsync(result.Info!, progress);
         }
         catch (Exception ex)

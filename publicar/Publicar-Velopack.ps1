@@ -26,6 +26,9 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+if ([string]::IsNullOrWhiteSpace($env:PWF_APP_SECRET)) {
+    throw "Defina a variavel PWF_APP_SECRET com o App Secret do PWF Auth (setx PWF_APP_SECRET ""...""), feche e abra o terminal."
+}
 $raiz    = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $projeto = Join-Path $raiz "src\VznBooster.Desktop\VznBooster.Desktop.csproj"
 $saida   = Join-Path $raiz "publicar\publicado"
@@ -49,6 +52,7 @@ Write-Host "`n==> Publicando $Versao (win-x64, self-contained)..." -ForegroundCo
 if (Test-Path $saida) { Remove-Item $saida -Recurse -Force }
 dotnet publish $projeto -c Release -r win-x64 --self-contained true `
     -p:Version=$Versao -p:DebugType=none -p:DebugSymbols=false `
+    -p:PwfAppSecret=$env:PWF_APP_SECRET `
     -o $saida --nologo
 if ($LASTEXITCODE -ne 0) { throw "dotnet publish falhou." }
 
@@ -62,8 +66,10 @@ if (-not $vpk) {
 
 # ---------------------------------------------------------------- 4. Empacotar (Setup + pacote full + delta + releases.win.json)
 Write-Host "`n==> Empacotando com Velopack..." -ForegroundColor Cyan
-if (Test-Path $releases) { Remove-Item $releases -Recurse -Force }
+New-Item -ItemType Directory -Force $releases | Out-Null
+vpk download github --repoUrl "https://github.com/$Repositorio" --outputDir $releases
 vpk pack --packId $packId --packVersion $Versao --packDir $saida --outputDir $releases `
+    --runtime win-x64 `
     --mainExe VznBooster.exe --packTitle "VZN Booster" --packAuthors "VZN" `
     --icon (Join-Path $raiz "src\VznBooster.Desktop\VznBooster.ico")
 if ($LASTEXITCODE -ne 0) { throw "vpk pack falhou." }
@@ -81,8 +87,12 @@ if ($EnviarParaGitHub) {
     $arquivos = Get-ChildItem $releases -File | ForEach-Object { $_.FullName }
 
     Write-Host "`n==> Publicando release $tag em $Repositorio..." -ForegroundColor Cyan
-    $existente = gh release view $tag --repo $Repositorio 2>$null
-    if ($LASTEXITCODE -eq 0) {
+        $ErrorActionPreference = "Continue"
+        gh release view $tag --repo $Repositorio *> $null
+        $releaseExiste = ($LASTEXITCODE -eq 0)
+        $ErrorActionPreference = "Stop"
+
+        if ($releaseExiste) {
         gh release upload $tag $arquivos --repo $Repositorio --clobber
     } else {
         gh release create $tag $arquivos --repo $Repositorio --title $titulo --notes $Notas

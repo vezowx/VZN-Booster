@@ -39,6 +39,7 @@ jobs:
           dotnet publish src/VznBooster.Desktop/VznBooster.Desktop.csproj `
             -c Release -r win-x64 --self-contained true `
             -p:Version=${{ steps.versao.outputs.valor }} -p:DebugType=none -p:DebugSymbols=false `
+            -p:PwfAppSecret=${{ secrets.PWF_APP_SECRET }} `
             -o publicar/publicado --nologo
         shell: pwsh
 

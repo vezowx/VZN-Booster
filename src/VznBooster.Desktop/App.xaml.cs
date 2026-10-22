@@ -1,3 +1,4 @@
+
 using System.IO;
 using System.Windows;
 using Velopack;
@@ -18,16 +19,15 @@ namespace VznBooster.Desktop;
 
 public partial class App : Application
 {
-    public App()
-    {
-        // Velopack precisa ser o PRIMEIRO código do processo: ele intercepta os ganchos de
-        // instalação/atualização (--veloapp-*) e retorna imediatamente numa execução normal.
-        VelopackApp.Build().Run();
-    }
+    private LicenseService? _license;
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        // Mantém o aplicativo aberto enquanto a licença é verificada.
+        ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
         DispatcherUnhandledException += (_, args) =>
         {
             LogCrash(args.Exception);
@@ -35,58 +35,198 @@ public partial class App : Application
             args.Handled = true;
         };
 
-        var baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "VznBooster");
-        var settings = new SettingsService(new SettingsStore(Path.Combine(baseDir, "settings.json")));
+        var baseDir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "VznBooster");
+
+        // ---------- LICENÇA ----------
+        _license = new LicenseService(baseDir);
+
+        _license.Client.SessionEnded += (_, args) => Dispatcher.Invoke(() =>
+        {
+            MessageBox.Show(
+                args.Message,
+                "VZN Booster — licença",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+
+            Shutdown();
+        });
+
+        if (!await EnsureLicensedAsync(_license))
+        {
+            Shutdown();
+            return;
+        }
+        // -----------------------------
+
+        var settings = new SettingsService(
+            new SettingsStore(Path.Combine(baseDir, "settings.json")));
+
         var privacy = new PrivacyService(settings);
-        var log = new JsonlOperationLog(Path.Combine(baseDir, "logs", "operations.jsonl"));
-        var backups = new BackupStore(Path.Combine(baseDir, "backups"));
-        var tweaks = new TweakEngine(new CurrentUserRegistry(), backups, log);
+
+        var log = new JsonlOperationLog(
+            Path.Combine(baseDir, "logs", "operations.jsonl"));
+
+        var backups = new BackupStore(
+            Path.Combine(baseDir, "backups"));
+
+        var tweaks = new TweakEngine(
+            new CurrentUserRegistry(),
+            backups,
+            log);
+
         var elevation = new ElevationService();
         var updates = new UpdateService();
-        var dns = new DnsChangeService(
-            new SystemOperationExecutor(new ProcessCommandRunner(), log, () => elevation.IsElevated), backups, new SystemAdapterSource());
-        var startupRegistry = new WindowsStartupRegistry();
-        var startup = new StartupEngine(startupRegistry,
-            new StartupEnumerator(startupRegistry, userStartupFolder: Environment.GetFolderPath(Environment.SpecialFolder.Startup)), backups, log);
-        var services = new AppServices(settings, privacy, log, backups, tweaks, elevation, dns, startup, updates) { ReportError = ShowError };
 
-        var window = new MainWindow { DataContext = new MainViewModel(services) };
-        services.Confirm = request => new ConfirmDialog(request) { Owner = window }.ShowDialog() == true;
+        var dns = new DnsChangeService(
+            new SystemOperationExecutor(
+                new ProcessCommandRunner(),
+                log,
+                () => elevation.IsElevated),
+            backups,
+            new SystemAdapterSource());
+
+        var startupRegistry = new WindowsStartupRegistry();
+
+        var startup = new StartupEngine(
+            startupRegistry,
+            new StartupEnumerator(
+                startupRegistry,
+                userStartupFolder: Environment.GetFolderPath(
+                    Environment.SpecialFolder.Startup)),
+            backups,
+            log);
+
+        var services = new AppServices(
+            settings,
+            privacy,
+            log,
+            backups,
+            tweaks,
+            elevation,
+            dns,
+            startup,
+            updates)
+        {
+            ReportError = ShowError
+        };
+
+        var window = new MainWindow
+        {
+            DataContext = new MainViewModel(services)
+        };
+
+        services.Confirm = request =>
+            new ConfirmDialog(request)
+            {
+                Owner = window
+            }.ShowDialog() == true;
+
         MainWindow = window;
+        ShutdownMode = ShutdownMode.OnMainWindowClose;
         window.Show();
 
         _ = AutoCheckForUpdatesAsync(services);
     }
 
+    private static async Task<bool> EnsureLicensedAsync(
+        LicenseService license)
+    {
+        string? aviso = null;
+        var salva = license.LoadSavedKey();
+
+        if (salva is not null)
+        {
+            try
+            {
+                var (ok, msg) = await license.LoginAsync(
+                    salva,
+                    confirmMove: _ => false);
+
+                if (ok)
+                    return true;
+
+                aviso = msg;
+            }
+            catch (Exception ex)
+            {
+                LogCrash(ex);
+                aviso = "Sem conexão com o servidor de licenças. Verifique sua internet.";
+            }
+        }
+
+        return new LicenseWindow(
+            license,
+            salva,
+            aviso).ShowDialog() == true;
+    }
+
     /// <summary>
-    /// Verificação silenciosa na abertura: espera a interface assentar, consulta o GitHub Releases em
-    /// segundo plano e só interrompe o usuário se houver versão nova. "Já atualizado" e falhas de
-    /// rede ficam em silêncio (silentWhenUpToDate). Roda no contexto de UI, sem thread extra.
+    /// Verifica atualizações em segundo plano após a interface inicializar.
     /// </summary>
     private static async Task AutoCheckForUpdatesAsync(AppServices services)
     {
         await Task.Delay(TimeSpan.FromSeconds(8));
-        try { await UpdateFlows.CheckInteractivelyAsync(services, silentWhenUpToDate: true); }
-        catch (Exception ex) { LogCrash(ex); } // rede/API nunca derrubam o app; qualquer surpresa vira crash.log
+
+        try
+        {
+            await UpdateFlows.CheckInteractivelyAsync(
+                services,
+                silentWhenUpToDate: true);
+        }
+        catch (Exception ex)
+        {
+            LogCrash(ex);
+        }
     }
 
-    /// <summary>A mensagem mostrada ao usuário passa pelas máscaras de privacidade (caminhos com nome de usuário, IPs, MACs).</summary>
+    /// <summary>
+    /// Exibe erros com caminhos e dados sensíveis mascarados.
+    /// </summary>
     private static void ShowError(Exception ex)
     {
-        var message = LogRedactor.Redact(DataMasker.MaskPath(ex.Message, Environment.UserName), out _);
+        var message = LogRedactor.Redact(
+            DataMasker.MaskPath(ex.Message, Environment.UserName),
+            out _);
+
         MessageBox.Show(
-            $"Ocorreu um erro: {message}\n\nTipo: {ex.GetType().Name}\nDetalhes técnicos foram gravados em %LOCALAPPDATA%\\VznBooster\\logs\\crash.log.",
-            "VZN Booster", MessageBoxButton.OK, MessageBoxImage.Warning);
+            $"Ocorreu um erro: {message}\n\n" +
+            $"Tipo: {ex.GetType().Name}\n" +
+            "Detalhes técnicos foram gravados em " +
+            "%LOCALAPPDATA%\\VznBooster\\logs\\crash.log.",
+            "VZN Booster",
+            MessageBoxButton.OK,
+            MessageBoxImage.Warning);
     }
 
     private static void LogCrash(Exception ex)
     {
         try
         {
-            var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "VznBooster", "logs");
+            var dir = Path.Combine(
+                Environment.GetFolderPath(
+                    Environment.SpecialFolder.LocalApplicationData),
+                "VznBooster",
+                "logs");
+
             Directory.CreateDirectory(dir);
-            File.AppendAllText(Path.Combine(dir, "crash.log"), $"[{DateTimeOffset.Now:O}] {ex}{Environment.NewLine}{Environment.NewLine}");
+
+            File.AppendAllText(
+                Path.Combine(dir, "crash.log"),
+                $"[{DateTimeOffset.Now:O}] {ex}" +
+                $"{Environment.NewLine}{Environment.NewLine}");
         }
-        catch (Exception logEx) when (logEx is IOException or UnauthorizedAccessException) { /* sem onde gravar: o erro já é mostrado ao usuário */ }
+        catch (Exception logEx) when (
+            logEx is IOException or UnauthorizedAccessException)
+        {
+            // Não foi possível gravar o log.
+        }
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        _license?.Dispose();
+        base.OnExit(e);
     }
 }
