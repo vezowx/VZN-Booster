@@ -1,84 +1,101 @@
-## INSTRUÇÕES DE DESENVOLVIMENTO — VZN BOOSTER
+# ⚡ VZN BOOSTER
 
-Quero que você continue desenvolvendo o VZN BOOSTER de forma contínua, mantendo o foco na implementação das funcionalidades e na conclusão do projeto.
+### Seu PC. Seu desempenho. Seu controle.
 
-### 1. COMUNICAÇÃO OBJETIVA
+**Uma ferramenta para monitorar, personalizar e otimizar o Windows, com foco em desempenho, praticidade e uma experiência moderna para quem gosta de extrair o melhor do próprio PC.**
 
-Não preciso de explicações detalhadas sobre tudo o que foi adicionado, alterado, corrigido ou investigado.
+<p align="center">
+  <a href="https://github.com/vezowx/VZN-Booster/releases">
+    <img src="https://img.shields.io/badge/⬇%20DOWNLOAD-LATEST%20RELEASE-7C5CFC?style=for-the-badge" alt="Baixar versão mais recente">
+  </a>
+  <a href="https://github.com/vezowx/VZN-Booster">
+    <img src="https://img.shields.io/badge/GitHub-VZN--Booster-181717?style=for-the-badge&logo=github" alt="Repositório GitHub">
+  </a>
+</p>
 
-Evite relatórios longos, explicações técnicas extensas, listas de arquivos modificados e descrições desnecessárias do código.
+---
 
-**Só forneça informações técnicas detalhadas quando eu pedir explicitamente.**
+## 🚀 Sobre o projeto
 
-Quero que você dedique o máximo possível do trabalho à implementação, aos testes e à correção de problemas, em vez de produzir relatórios extensos.
+O **VZN BOOSTER** é um projeto de otimização para Windows desenvolvido para reunir ferramentas de desempenho, monitoramento e personalização do sistema em um só lugar.
 
-### 2. ATUALIZAÇÃO CONTÍNUA DO ZIP
+A proposta é oferecer uma interface moderna, intuitiva e organizada, permitindo que o usuário tenha mais controle sobre o computador sem precisar navegar por dezenas de configurações diferentes do Windows.
 
-Sempre que concluir uma etapa relevante do desenvolvimento:
+Seja para jogar, trabalhar ou simplesmente manter o sistema organizado, o VZN BOOSTER busca tornar o gerenciamento do PC mais acessível.
 
-- Atualize o projeto completo dentro do ZIP.
-- Mantenha o ZIP atualizado com todas as alterações mais recentes.
-- Inclua os arquivos necessários para continuar o desenvolvimento.
-- Não remova funcionalidades existentes nem substitua implementações por versões incompletas.
-- Verifique se o arquivo ZIP foi realmente atualizado antes de disponibilizá-lo.
-- Forneça o link para baixar a versão atualizada.
+## ✨ O que você encontrará
 
-Não quero precisar solicitar manualmente a atualização do ZIP a cada etapa.
+> Os recursos disponíveis dependem da versão publicada e do estágio de desenvolvimento do projeto.
 
-O ZIP deve continuar sendo a versão mais recente do projeto, e não uma versão antiga ou um pacote contendo apenas os arquivos modificados.
+- ⚡ **Desempenho:** ferramentas e ajustes voltados à configuração do sistema.
+- 📊 **Monitoramento de hardware:** informações sobre os componentes e o uso dos recursos do PC.
+- 🌐 **Network:** utilitários para consultar informações de rede e explorar configurações relacionadas à conectividade.
+- 🧹 **Cleaner:** ferramentas para ajudar a identificar e remover arquivos temporários.
+- 🛠️ **Tweaker:** ajustes personalizáveis do Windows, com atenção aos possíveis impactos de cada alteração.
+- 📋 **Logs:** organização de informações e registros para facilitar o acompanhamento das operações.
+- 🎮 **Foco em jogos:** recursos pensados para usuários que desejam configurar o PC para suas atividades e jogos favoritos.
+- 🎨 **Interface moderna:** experiência visual escura, navegação organizada e foco na usabilidade.
 
-### 3. CONTINUE O DESENVOLVIMENTO
+## 🎯 Nossa proposta
 
-Após concluir uma etapa, prossiga para a próxima sem interromper o trabalho apenas para apresentar um relatório.
+O objetivo do VZN BOOSTER não é prometer FPS milagroso. É disponibilizar ferramentas úteis, informações claras e opções de configuração para que cada usuário possa entender melhor o próprio sistema.
 
-Siga o planejamento existente, respeite a ordem de prioridades e mantenha o contexto do que já foi implementado.
+**Mais controle. Mais transparência. Menos complicação.**
 
-Se encontrar erros de compilação ou problemas durante os testes, investigue e corrija-os antes de avançar quando isso for necessário para garantir a estabilidade do projeto.
+Os resultados das otimizações podem variar conforme o hardware, os drivers, a versão do Windows, os programas em execução e as configurações já utilizadas.
 
-Não considere uma funcionalidade concluída apenas porque o código foi escrito. Valide o que for possível e não declare testes bem-sucedidos sem executá-los.
+## 📥 Download e instalação
 
-Se houver um bloqueio real que impeça a continuação, informe-o de maneira breve e objetiva.
+### Windows
 
-### 4. ÚNICO RELATÓRIO NECESSÁRIO AO ATUALIZAR O ZIP
+1. Acesse a página oficial de [Releases](https://github.com/vezowx/VZN-Booster/releases).
+2. Abra a versão mais recente disponível.
+3. Confira os arquivos e as instruções daquela versão.
+4. Baixe o instalador ou pacote disponibilizado.
+5. Siga as instruções incluídas na publicação para executar o aplicativo.
 
-Sempre que disponibilizar uma nova versão do ZIP, apresente somente:
+**Importante:** se ainda não houver um instalador `.exe` disponível, consulte os arquivos e os requisitos indicados na versão publicada.
 
-- **ZIP atualizado:** link para baixar.
-- **Etapa atual:** nome da etapa em andamento ou recém-concluída.
-- **Próxima etapa:** o que será desenvolvido em seguida.
-- **Progresso geral:** estimativa percentual de quanto do projeto está concluído.
-- **Falta para terminar:** estimativa do trabalho restante, em etapas ou tarefas principais.
+## 🛡️ Segurança e transparência
 
-Use este formato:
+A segurança do seu computador é importante.
 
-**ZIP atualizado:** [link para download]
+- Leia a descrição de cada ajuste antes de aplicá-lo.
+- Faça backup dos arquivos importantes e considere criar um ponto de restauração antes de alterar configurações avançadas do sistema.
+- Algumas operações podem exigir privilégios de administrador.
+- Evite aplicar ajustes cujo funcionamento ou impacto você não compreenda.
+- Baixe o projeto exclusivamente pelo [repositório oficial](https://github.com/vezowx/VZN-Booster) e pela página de [Releases](https://github.com/vezowx/VZN-Booster/releases).
 
-**Etapa atual:** [etapa atual ou concluída]
+O VZN BOOSTER está em desenvolvimento. A disponibilidade, a estabilidade e o comportamento dos recursos podem variar entre versões. Não aplique alterações no sistema sem entender seus possíveis efeitos.
 
-**Próxima etapa:** [próxima etapa do planejamento]
+## 🧪 Desenvolvimento
 
-**Progresso geral:** [percentual estimado]
+O projeto continua evoluindo com o objetivo de aprimorar os recursos, a interface, a compatibilidade e a experiência geral de utilização.
 
-**Falta para terminar:** [etapas ou tarefas principais restantes]
+Sugestões, relatos de bugs e ideias para novos recursos são bem-vindos!
 
-Não acrescente explicações técnicas, histórico de correções, causas de erros, listas de arquivos alterados ou detalhes de implementação, a menos que eu solicite.
+Encontrou algum problema? Abra uma [Issue no GitHub](https://github.com/vezowx/VZN-Booster/issues) e, se possível, informe:
 
-### 5. PROGRESSO REAL, SEM ESTIMATIVAS ENGANOSAS
+- A versão do VZN BOOSTER utilizada.
+- Sua versão do Windows.
+- O que você estava tentando fazer.
+- O que aconteceu e qual resultado esperava.
 
-O percentual deve representar o progresso real do projeto, considerando funcionalidades implementadas, testes, correções e etapas de distribuição.
+## 🗺️ Acompanhe o projeto
 
-Não aumente o percentual apenas porque foram escritos muitos arquivos ou linhas de código.
+- **⬇️ [Baixar versões disponíveis](https://github.com/vezowx/VZN-Booster/releases)**
+- **💻 [Explorar o código-fonte](https://github.com/vezowx/VZN-Booster)**
+- **🐛 [Reportar um problema](https://github.com/vezowx/VZN-Booster/issues)**
 
-Considere separadamente o que está implementado, o que foi testado e o que ainda precisa ser validado.
+Se gostou da ideia, considere deixar uma ⭐ no repositório. Isso ajuda outras pessoas a descobrirem o projeto e incentiva seu desenvolvimento!
 
-A estimativa do trabalho restante deve ser honesta e atualizada conforme o projeto evolui.
+---
 
-### 6. QUANDO O PROJETO ESTIVER CONCLUÍDO
+<p align="center">
+  <b>⚡ VZN BOOSTER</b><br>
+  <i>Otimização, controle e uma nova experiência para o seu PC.</i>
+</p>
 
-Continue até concluir todas as etapas previstas no planejamento atual, incluindo as funcionalidades, o redesign completo da interface, a compilação, a geração do executável e a criação do instalador, conforme o escopo já definido para o VZN BOOSTER.
-
-Não considere o projeto finalizado enquanto houver tarefas obrigatórias pendentes.
-
-Ao terminar, disponibilize o ZIP final atualizado e os artefatos de distribuição que tiverem sido efetivamente gerados e validados.
-
-**Instrução final:** menos relatórios, mais desenvolvimento. Atualize o ZIP, informe a etapa atual, a próxima etapa, o progresso real e o que falta para terminar. Só entre em detalhes técnicos quando eu pedir.
+<p align="center">
+  Desenvolvido por <a href="https://github.com/vezowx">vezowx</a>
+</p>
