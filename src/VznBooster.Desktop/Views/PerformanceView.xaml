@@ -1,0 +1,122 @@
+<UserControl x:Class="VznBooster.Desktop.Views.PerformanceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,28,32,24">
+            <TextBlock Text="Desempenho" Style="{StaticResource PageTitle}"/>
+            <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,20"
+                       Text="Monitoramento em tempo real, coletado apenas enquanto esta tela está aberta. Nenhum processo é encerrado sem a sua confirmação; o sistema, serviços e componentes de segurança são protegidos."/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Style="{StaticResource Card}" Margin="0,0,8,16">
+                    <StackPanel>
+                        <TextBlock Text="CPU" Style="{StaticResource StatLabel}"/>
+                        <TextBlock Text="{Binding CpuText}" Style="{StaticResource StatValue}" Margin="0,2,0,0"/>
+                        <TextBlock Text="{Binding FrequencyText}" Style="{StaticResource Muted}" FontSize="12"/>
+                        <ItemsControl ItemsSource="{Binding Cores}" Margin="0,14,0,0">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Width="150" Margin="0,0,14,10">
+                                        <DockPanel>
+                                            <TextBlock DockPanel.Dock="Right" Text="{Binding Text}" Style="{StaticResource Muted}" FontSize="12"/>
+                                            <TextBlock Text="{Binding Name}" FontSize="12"/>
+                                        </DockPanel>
+                                        <ProgressBar Value="{Binding Percent, Mode=OneWay}" Maximum="100" Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="MEMÓRIA RAM" Style="{StaticResource StatLabel}"/>
+                            <TextBlock Text="{Binding RamText}" Style="{StaticResource StatValue}" Margin="0,2,0,0"/>
+                            <TextBlock Text="{Binding RamDetail}" Style="{StaticResource Muted}" FontSize="12"/>
+                            <TextBlock Text="{Binding CommitText}" Style="{StaticResource Muted}" FontSize="12" Margin="0,6,0,0"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="Ainda não coletado" Style="{StaticResource SectionTitle}" Foreground="{StaticResource WarnBrush}"/>
+                            <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,0"
+                                       Text="Uso de GPU, atividade de discos e temperaturas estão indisponíveis nesta versão; nada é estimado no lugar."/>
+                            <TextBlock Text="{Binding SelfText}" Style="{StaticResource Muted}" FontSize="12" Margin="0,10,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="Processos" Style="{StaticResource SectionTitle}"/>
+                    <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" ToolTip="Pesquisar por nome ou PID" Margin="0,10,0,6"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Ordenar por:" Style="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <RadioButton Style="{StaticResource OptionRadio}" GroupName="ProcSort" Content="CPU" IsChecked="{Binding IsSortCpu, Mode=TwoWay}" Margin="0,0,16,0"/>
+                        <RadioButton Style="{StaticResource OptionRadio}" GroupName="ProcSort" Content="RAM" IsChecked="{Binding IsSortRam, Mode=TwoWay}"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding ProcessInfo}" Style="{StaticResource Muted}" FontSize="12" Margin="0,6,0,8"/>
+
+                    <Grid Margin="10,0,10,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="190"/>
+                            <ColumnDefinition Width="64"/>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Nome" Style="{StaticResource StatLabel}"/>
+                        <TextBlock Grid.Column="1" Text="PID" Style="{StaticResource StatLabel}"/>
+                        <TextBlock Grid.Column="2" Text="Tipo" Style="{StaticResource StatLabel}"/>
+                        <TextBlock Grid.Column="3" Text="CPU" Style="{StaticResource StatLabel}"/>
+                        <TextBlock Grid.Column="4" Text="RAM" Style="{StaticResource StatLabel}"/>
+                        <TextBlock Grid.Column="5" Text="Caminho (nome de usuário oculto)" Style="{StaticResource StatLabel}"/>
+                    </Grid>
+                    <ItemsControl ItemsSource="{Binding Processes}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource Card2Brush}" CornerRadius="6" Padding="10,7" Margin="0,3,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="190"/>
+                                            <ColumnDefinition Width="64"/>
+                                            <ColumnDefinition Width="110"/>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="100"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Pid}" Style="{StaticResource Muted}"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding KindText}" Style="{StaticResource Muted}"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding CpuText}"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding RamText}"/>
+                                        <TextBlock Grid.Column="5" Text="{Binding PathText}" Style="{StaticResource Muted}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" FontSize="12"/>
+                                        <Button Grid.Column="6" Content="Encerrar…" Command="{Binding CloseCommand}" Style="{StaticResource SecondaryButton}"
+                                                Padding="10,3" Margin="8,0,0,0" FontSize="12" ToolTip="Pede que o programa feche (nada é forçado)"
+                                                Visibility="{Binding HasClose, Converter={StaticResource BoolToVis}}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

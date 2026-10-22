@@ -1,0 +1,80 @@
+<UserControl x:Class="VznBooster.Desktop.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,28,32,24" MaxWidth="820" HorizontalAlignment="Left">
+            <TextBlock Text="Configurações" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="As alterações são salvas na hora." Style="{StaticResource Muted}" Margin="0,4,0,24"/>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="Privacidade" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,14"
+                               Text="A ocultação é visual: os valores reais continuam sendo usados internamente nos diagnósticos. Logs e relatórios gravados pelo aplicativo ocultam IP, MAC e segredos. Nada é enviado a serviços externos."/>
+                    <CheckBox Content="Ocultar informações sensíveis por padrão (recomendado)" IsChecked="{Binding HideSensitiveData, Mode=TwoWay}"/>
+
+                    <TextBlock Text="Quando o olho revelar um dado, voltar a ocultá-lo:" Margin="0,18,0,6"/>
+                    <RadioButton Style="{StaticResource OptionRadio}" GroupName="RevealMode" IsChecked="{Binding IsAutoHide, Mode=TwoWay}"
+                                 Content="Automaticamente após um intervalo (e ao sair da seção)"/>
+                    <StackPanel Orientation="Horizontal" Margin="28,2,0,4" IsEnabled="{Binding IsAutoHide}">
+                        <TextBlock Text="Intervalo em segundos (5 a 300):" Style="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBox Width="80" Text="{Binding RevealSecondsText, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding RevealSecondsError}" Foreground="{StaticResource ErrorBrush}" FontSize="12" Margin="28,0,0,4"/>
+                    <RadioButton Style="{StaticResource OptionRadio}" GroupName="RevealMode" IsChecked="{Binding IsHideOnLeave, Mode=TwoWay}"
+                                 Content="Somente ao sair da seção"/>
+                    <RadioButton Style="{StaticResource OptionRadio}" GroupName="RevealMode" IsChecked="{Binding IsKeepSession, Mode=TwoWay}"
+                                 Content="Manter visível durante a sessão atual"/>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="12" Margin="0,10,0,0"
+                               Text="A revelação é sempre explícita e individual por categoria (endereços IP, gateway, nome do computador, nome da conta, caminhos de arquivos)."/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="Aparência e desempenho" Style="{StaticResource SectionTitle}"/>
+                    <CheckBox Content="Reduzir animações (transições de página e da barra lateral)" IsChecked="{Binding ReduceAnimations, Mode=TwoWay}" Margin="0,12,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="Permissões" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Text="{Binding ElevationText}" Style="{StaticResource Muted}" Margin="0,8,0,0"/>
+                    <Button Content="Reiniciar como administrador" Command="{Binding RestartAsAdminCommand}" Style="{StaticResource SecondaryButton}"
+                            HorizontalAlignment="Left" Margin="0,14,0,0"/>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="12" Margin="0,8,0,0"
+                               Text="Use apenas quando precisar de uma operação administrativa. O aplicativo sempre inicia sem administrador."/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="Atualizações" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Text="{Binding UpdateStatusText}" Style="{StaticResource Muted}" Margin="0,8,0,0"/>
+                    <Button Content="Procurar atualizações agora" Command="{Binding CheckUpdatesCommand}" Style="{StaticResource SecondaryButton}"
+                            HorizontalAlignment="Left" Margin="0,14,0,0"/>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="12" Margin="0,8,0,0"
+                               Text="As atualizações vêm do GitHub Releases oficial do projeto e só são baixadas e instaladas com a sua confirmação. Configurações, logs e backups são preservados."/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="Aplicativo" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Text="{Binding VersionText}" Style="{StaticResource Muted}" Margin="0,8,0,0"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                        <TextBlock Text="Arquivo de configurações:" Style="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding SettingsPath.Display}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        <Button Style="{StaticResource IconButton}" Margin="6,0,0,0" Content="{Binding SettingsPath.Icon}"
+                                ToolTip="{Binding SettingsPath.ToolTipText}" Command="{Binding SettingsPath.ToggleCommand}"/>
+                    </StackPanel>
+                    <Button Content="Restaurar padrões do aplicativo" Command="{Binding ResetCommand}" Style="{StaticResource SecondaryButton}"
+                            HorizontalAlignment="Left" Margin="0,14,0,0"/>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="12" Margin="0,8,0,0"
+                               Text="Restaura apenas as preferências do VZN Booster. Não altera configurações do Windows."/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

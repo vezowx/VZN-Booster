@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>VznBooster.Desktop</RootNamespace>
+    <AssemblyName>VznBooster</AssemblyName>
+
+    <!-- Identidade do aplicativo (Propriedades do arquivo, UAC, instalador e "Adicionar ou remover programas") -->
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>VZN Booster</Product>
+    <Description>Otimizador e diagnóstico para Windows 10/11</Description>
+    <Company>VZN</Company>
+    <Copyright>Copyright © VZN 2026</Copyright>
+    <ApplicationIcon>VznBooster.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Atualizações automáticas. Manter a MESMA versão da ferramenta vpk (veja publicar\Publicar-Velopack.ps1). -->
+    <PackageReference Include="Velopack" Version="1.2.161" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VznBooster.Core\VznBooster.Core.csproj" />
+  </ItemGroup>
+</Project>

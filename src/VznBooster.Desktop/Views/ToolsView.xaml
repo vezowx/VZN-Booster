@@ -1,0 +1,65 @@
+<UserControl x:Class="VznBooster.Desktop.Views.ToolsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,28,32,24">
+            <TextBlock Text="Ferramentas" Style="{StaticResource PageTitle}"/>
+            <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,18"
+                       Text="Atalhos para ferramentas nativas do Windows (cada uma abre o programa do próprio Windows; não são recursos do VZN Booster) e verificações de integridade somente de leitura."/>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="Verificações de integridade" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,10"
+                               Text="Executam SFC (/verifyonly) e DISM (/CheckHealth). Somente verificam: nenhum reparo é feito. Exigem administrador, podem levar vários minutos e usar bastante disco e CPU, e podem ser canceladas."/>
+                    <TextBlock Text="Exige administrador para executar." Foreground="{StaticResource WarnBrush}" FontSize="12" Margin="0,0,0,8"
+                               Visibility="{Binding ShowAdminNotice, Converter={StaticResource BoolToVis}}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Verificar arquivos do sistema (SFC)" Command="{Binding SfcCommand}" Style="{StaticResource PrimaryButton}"/>
+                        <Button Content="Verificar imagem (DISM)" Command="{Binding DismCommand}" Style="{StaticResource PrimaryButton}"/>
+                        <Button Content="Cancelar" Command="{Binding CancelCommand}" Style="{StaticResource SecondaryButton}"/>
+                        <Button Content="Reiniciar como administrador" Command="{Binding RestartAsAdminCommand}" Style="{StaticResource SecondaryButton}"
+                                Visibility="{Binding ShowAdminNotice, Converter={StaticResource BoolToVis}}"/>
+                    </StackPanel>
+                    <ProgressBar IsIndeterminate="True" Margin="0,14,0,0" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+                    <Border Background="{StaticResource Card2Brush}" CornerRadius="8" Padding="12" Margin="0,12,0,0"
+                            Visibility="{Binding HasResult, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="{Binding Result}" TextWrapping="Wrap"/>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <ItemsControl ItemsSource="{Binding Groups}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Title}" Style="{StaticResource SectionTitle}"/>
+                                <ItemsControl ItemsSource="{Binding Items}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{StaticResource Card2Brush}" CornerRadius="10" Padding="14,10" Margin="0,10,0,0">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                                        <TextBlock Text="{Binding Description}" Style="{StaticResource Muted}" FontSize="12" Margin="0,2,0,0"/>
+                                                    </StackPanel>
+                                                    <Button Grid.Column="1" Content="Abrir (atalho)" Command="{Binding OpenCommand}"
+                                                            Style="{StaticResource SecondaryButton}" Margin="12,0,0,0" Padding="12,6"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

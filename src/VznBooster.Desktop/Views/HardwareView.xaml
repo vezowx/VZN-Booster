@@ -1,0 +1,87 @@
+<UserControl x:Class="VznBooster.Desktop.Views.HardwareView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="SourceBadge" TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding SourceKey}" Value="Unavailable">
+                    <Setter Property="Foreground" Value="{StaticResource WarnBrush}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding SourceKey}" Value="Measured">
+                    <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,28,32,24">
+            <TextBlock Text="Hardware" Style="{StaticResource PageTitle}"/>
+            <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,18"
+                       Text="Inventário do computador. Cada valor mostra sua fonte; o que não pôde ser lido aparece como indisponível e nunca é estimado."/>
+
+            <WrapPanel Margin="0,0,0,6">
+                <Border Style="{StaticResource Chip}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Computador" Style="{StaticResource Muted}" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding ComputerName.Display}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <Button Style="{StaticResource IconButton}" Width="26" Height="26" Margin="6,0,-4,0"
+                                Content="{Binding ComputerName.Icon}" ToolTip="{Binding ComputerName.ToolTipText}"
+                                Command="{Binding ComputerName.ToggleCommand}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Chip}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Conta" Style="{StaticResource Muted}" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding UserName.Display}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <Button Style="{StaticResource IconButton}" Width="26" Height="26" Margin="6,0,-4,0"
+                                Content="{Binding UserName.Icon}" ToolTip="{Binding UserName.ToolTipText}"
+                                Command="{Binding UserName.ToggleCommand}"/>
+                    </StackPanel>
+                </Border>
+            </WrapPanel>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="Relatório técnico" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Text="{Binding Info}" Style="{StaticResource Muted}" FontSize="12" Margin="0,4,0,10"/>
+                    <CheckBox Content="Incluir nome do computador e da conta no relatório (desmarcado por padrão)" IsChecked="{Binding IncludePersonal}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                        <Button Content="Exportar relatório…" Command="{Binding ExportCommand}" Style="{StaticResource PrimaryButton}"/>
+                        <Button Content="Atualizar" Command="{Binding RefreshCommand}" Style="{StaticResource SecondaryButton}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <ItemsControl ItemsSource="{Binding Sections}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Title}" Style="{StaticResource SectionTitle}"/>
+                                <ItemsControl ItemsSource="{Binding Rows}" Margin="0,6,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,6,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="250"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Label}" Style="{StaticResource Muted}"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Value}" TextWrapping="Wrap"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding SourceText}" Style="{StaticResource SourceBadge}" Margin="12,2,0,0"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

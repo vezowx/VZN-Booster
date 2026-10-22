@@ -1,0 +1,154 @@
+<UserControl x:Class="VznBooster.Desktop.Views.TweakerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="RiskBadge" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="10,0,0,0"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RiskKey}" Value="Moderate">
+                    <Setter Property="Foreground" Value="{StaticResource WarnBrush}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RiskKey}" Value="High">
+                    <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="StatusBadge" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="10,0,0,0"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding StatusKey}" Value="Applied">
+                    <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding StatusKey}" Value="Partial">
+                    <Setter Property="Foreground" Value="{StaticResource WarnBrush}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,28,32,24">
+            <TextBlock Text="Tweaker" Style="{StaticResource PageTitle}"/>
+            <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,20"
+                       Text="Ajustes do Windows um a um, com explicação, risco, backup e reversão. Nada é aplicado ao abrir, selecionar ou escolher um perfil: só depois da sua confirmação."/>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="Perfis" Style="{StaticResource SectionTitle}"/>
+                    <ItemsControl ItemsSource="{Binding Profiles}" Margin="0,10,0,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding Name}" Command="{Binding SelectCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Text="{Binding ProfileInfo}" Style="{StaticResource Muted}" Margin="0,4,0,0"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                        <Button Content="Aplicar selecionados" Command="{Binding ApplySelectedCommand}" Style="{StaticResource PrimaryButton}"/>
+                        <Button Content="Atualizar estados" Command="{Binding RefreshCommand}" Style="{StaticResource SecondaryButton}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Visibility="{Binding HasLastResult, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <TextBlock Text="Último resultado" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Text="{Binding LastResult}" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <ItemsControl ItemsSource="{Binding Groups}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Title}" Style="{StaticResource SectionTitle}"/>
+                                <ItemsControl ItemsSource="{Binding Cards}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{StaticResource Card2Brush}" CornerRadius="10" Padding="14" Margin="0,10,0,0">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Name}" FontWeight="SemiBold"/>
+                                                            <TextBlock Text="{Binding RiskText}" Style="{StaticResource RiskBadge}"/>
+                                                            <TextBlock Text="{Binding StatusText}" Style="{StaticResource StatusBadge}"/>
+                                                        </StackPanel>
+                                                        <TextBlock Text="{Binding Summary}" Style="{StaticResource Muted}" Margin="28,4,0,0"/>
+                                                        <TextBlock Text="{Binding CurrentText}" Style="{StaticResource Muted}" FontSize="12" Margin="28,4,0,0"/>
+                                                        <TextBlock Text="{Binding NotApplicableReason}" Foreground="{StaticResource WarnBrush}" TextWrapping="Wrap" Margin="28,4,0,0"
+                                                                   Visibility="{Binding HasNotApplicableReason, Converter={StaticResource BoolToVis}}"/>
+                                                        <TextBlock Text="{Binding RestoreHint}" Foreground="{StaticResource WarnBrush}" TextWrapping="Wrap" FontSize="12" Margin="28,4,0,0"
+                                                                   Visibility="{Binding HasRestoreHint, Converter={StaticResource BoolToVis}}"/>
+                                                        <Button Content="Detalhes e riscos" Command="{Binding ToggleDetailsCommand}" Style="{StaticResource SecondaryButton}"
+                                                                HorizontalAlignment="Left" Margin="28,10,0,0" Padding="12,5"/>
+
+                                                        <StackPanel Margin="28,10,0,0" Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVis}}">
+                                                            <TextBlock Style="{StaticResource Muted}" Margin="0,0,0,6">
+                                                                <Run Text="Funcionamento: " Foreground="{StaticResource TextBrush}"/><Run Text="{Binding Technical, Mode=OneWay}"/>
+                                                            </TextBlock>
+                                                            <TextBlock Style="{StaticResource Muted}" Margin="0,0,0,6">
+                                                                <Run Text="Objetivo: " Foreground="{StaticResource TextBrush}"/><Run Text="{Binding Goal, Mode=OneWay}"/>
+                                                            </TextBlock>
+                                                            <TextBlock Style="{StaticResource Muted}" Margin="0,0,0,6">
+                                                                <Run Text="Benefício esperado: " Foreground="{StaticResource TextBrush}"/><Run Text="{Binding ExpectedBenefit, Mode=OneWay}"/>
+                                                                <Run Text=" (" /><Run Text="{Binding BenefitText, Mode=OneWay}"/><Run Text=")"/>
+                                                            </TextBlock>
+                                                            <TextBlock Style="{StaticResource Muted}" Margin="0,0,0,6">
+                                                                <Run Text="Útil quando: " Foreground="{StaticResource TextBrush}"/><Run Text="{Binding UsefulWhen, Mode=OneWay}"/>
+                                                            </TextBlock>
+                                                            <TextBlock Style="{StaticResource Muted}" Margin="0,0,0,6">
+                                                                <Run Text="Possíveis efeitos negativos: " Foreground="{StaticResource ErrorBrush}"/><Run Text="{Binding SideEffects, Mode=OneWay}"/>
+                                                            </TextBlock>
+                                                            <TextBlock Text="{Binding RestartText}" Style="{StaticResource Muted}" Margin="0,0,0,6"/>
+                                                            <TextBlock Text="{Binding AdminText}" Style="{StaticResource Muted}" Margin="0,0,0,6"/>
+                                                            <TextBlock Text="{Binding ReversibleText}" Style="{StaticResource Muted}" Margin="0,0,0,6"/>
+                                                            <TextBlock Text="{Binding CompatibilityNote}" Style="{StaticResource Muted}" Margin="0,0,0,6"
+                                                                       Visibility="{Binding HasCompatibilityNote, Converter={StaticResource BoolToVis}}"/>
+                                                        </StackPanel>
+                                                    </StackPanel>
+
+                                                    <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Top">
+                                                        <Button Content="Aplicar" Command="{Binding ApplyCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,0,8"/>
+                                                        <Button Content="Restaurar" Command="{Binding RestoreCommand}" Style="{StaticResource SecondaryButton}" Margin="0"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="O que o Tweaker não faz" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Style="{StaticResource Muted}" Margin="0,8,0,0"
+                               Text="Não desativa Defender, firewall, atualizações nem serviços, não aplica pacotes de debloat e não altera BIOS, tensão ou overclock. Cada ajuste altera só os valores descritos nele."/>
+                    <TextBlock Text="{Binding UnavailableText}" Style="{StaticResource Muted}" Margin="0,10,0,0" Foreground="{StaticResource WarnBrush}"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

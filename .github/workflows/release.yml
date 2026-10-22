@@ -1,0 +1,64 @@
+# Publicação automática: crie uma tag "v1.0.0" e o GitHub Actions compila, testa,
+# empacota com Velopack e publica a release — os usuários recebem a atualização sozinhos.
+#
+# Uso:
+#   git tag v1.0.0
+#   git push origin v1.0.0
+#
+# Pré-requisito: nenhum segredo extra — usa o GITHUB_TOKEN automático do repositório.
+
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write   # necessário para criar a release
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Extrai a versão da tag
+        id: versao
+        run: echo "valor=${GITHUB_REF_NAME#v}" >> $env:GITHUB_OUTPUT
+        shell: pwsh
+
+      - name: Testes do núcleo
+        run: dotnet test tests/VznBooster.Core.Tests/VznBooster.Core.Tests.csproj -c Release --nologo
+
+      - name: Publish (win-x64, self-contained)
+        run: |
+          dotnet publish src/VznBooster.Desktop/VznBooster.Desktop.csproj `
+            -c Release -r win-x64 --self-contained true `
+            -p:Version=${{ steps.versao.outputs.valor }} -p:DebugType=none -p:DebugSymbols=false `
+            -o publicar/publicado --nologo
+        shell: pwsh
+
+      - name: Instala o vpk
+        run: dotnet tool install -g vpk --version 1.2.161
+
+      - name: Empacota com Velopack
+        run: |
+          vpk pack --packId VZN.VznBooster --packVersion ${{ steps.versao.outputs.valor }} `
+            --packDir publicar/publicado --outputDir publicar/releases `
+            --mainExe VznBooster.exe --packTitle "VZN Booster" --packAuthors "VZN" `
+            --icon src/VznBooster.Desktop/VznBooster.ico
+        shell: pwsh
+
+      - name: Publica a release no GitHub
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          vpk upload github --repoUrl ${{ github.serverUrl }}/${{ github.repository }} `
+            --token $env:GITHUB_TOKEN --publish `
+            --releaseName "VZN Booster ${{ steps.versao.outputs.valor }}" `
+            --tag ${{ github.ref_name }} --outputDir publicar/releases
+        shell: pwsh

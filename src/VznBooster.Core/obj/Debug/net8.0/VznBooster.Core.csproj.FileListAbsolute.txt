@@ -1,0 +1,11 @@
+C:\Users\vezowx\Downloads\VZNBOOSTER\src\VznBooster.Core\bin\Debug\net8.0\VznBooster.Core.deps.json
+C:\Users\vezowx\Downloads\VZNBOOSTER\src\VznBooster.Core\bin\Debug\net8.0\VznBooster.Core.dll
+C:\Users\vezowx\Downloads\VZNBOOSTER\src\VznBooster.Core\bin\Debug\net8.0\VznBooster.Core.pdb
+C:\Users\vezowx\Downloads\VZNBOOSTER\src\VznBooster.Core\obj\Debug\net8.0\VznBooster.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vezowx\Downloads\VZNBOOSTER\src\VznBooster.Core\obj\Debug\net8.0\VznBooster.Core.AssemblyInfoInputs.cache
+C:\Users\vezowx\Downloads\VZNBOOSTER\src\VznBooster.Core\obj\Debug\net8.0\VznBooster.Core.AssemblyInfo.cs
+C:\Users\vezowx\Downloads\VZNBOOSTER\src\VznBooster.Core\obj\Debug\net8.0\VznBooster.Core.csproj.CoreCompileInputs.cache
+C:\Users\vezowx\Downloads\VZNBOOSTER\src\VznBooster.Core\obj\Debug\net8.0\VznBooster.Core.dll
+C:\Users\vezowx\Downloads\VZNBOOSTER\src\VznBooster.Core\obj\Debug\net8.0\refint\VznBooster.Core.dll
+C:\Users\vezowx\Downloads\VZNBOOSTER\src\VznBooster.Core\obj\Debug\net8.0\VznBooster.Core.pdb
+C:\Users\vezowx\Downloads\VZNBOOSTER\src\VznBooster.Core\obj\Debug\net8.0\ref\VznBooster.Core.dll
