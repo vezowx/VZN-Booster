@@ -1,58 +1,84 @@
-# VZN Booster
+## INSTRUÇÕES DE DESENVOLVIMENTO — VZN BOOSTER
 
-Otimizador/diagnóstico para Windows 10/11 x64 (C# / .NET 8 / WPF / MVVM).
+Quero que você continue desenvolvendo o VZN BOOSTER de forma contínua, mantendo o foco na implementação das funcionalidades e na conclusão do projeto.
 
-## Estado atual (honesto)
+### 1. COMUNICAÇÃO OBJETIVA
 
-Última verificação no Windows (autor): `dotnet build` ok nos 3 projetos e `dotnet test` com **250 de 250** testes passando (inclui todas as rodadas até Logs e encerrar programas).
-Esta rodada acrescentou código **ainda não compilado/testado** (marcado abaixo).
+Não preciso de explicações detalhadas sobre tudo o que foi adicionado, alterado, corrigido ou investigado.
 
-| Funcionalidade | Estado |
-| --- | --- |
-| Núcleo: logs com redação, executor de comandos com catálogo fechado, backups, configurações, privacidade (máscaras) | Concluído e verificado |
-| Network: adaptadores (IP/gateway mascarados + olho), teste de latência ICMP | Concluído e verificado (rede real só manualmente) |
-| DNS: perfis, plano, aplicar com backup/verificação, restaurar (núcleo) | Núcleo verificado com runner simulado |
-| **DNS na interface (Network): ver plano, aplicar, restaurar; restaurar também em Restauração** | **Novo, não verificado** (exige administrador; endereços dos perfis não conferidos em fonte oficial: o diálogo exige reconhecimento) |
-| **Comparador de DNS (consultas UDP reais, IPv4, só aponta vencedor se a diferença for significativa)** | **Novo, não verificado** (testes de formato do pacote e do critério escritos) |
-| **Barra lateral recolhida: rótulos ocultos (antes ficava um pedaço da letra visível)** | **Correção, não verificada** |
-| Home: CPU/RAM em tempo real, discos, conexão, espaço recuperável, recomendações, últimas ações | Concluído e verificado (valores reais só manualmente) |
-| Cleaner: 5 grupos, perfis de navegador, Lixeira, Prefetch avançado, exclusão com confirmação | Concluído e verificado (exclusão real só manualmente) |
-| Tweaker: 8 ajustes HKCU, perfis, backup/rollback/conflito; Restauração e Logs | Concluído e verificado com registro simulado; efeito real só manualmente |
-| Configurações: privacidade, animações, restaurar padrões | Concluído e verificado |
-| **Permissões: reiniciar como administrador (UAC)** | **Novo, não verificado** |
-| **Ponto de restauração do Windows (cria e verifica por contagem)** | **Novo, não verificado** (testes com runner simulado escritos) |
-| **Desempenho: CPU total e por núcleo, frequência reportada, RAM/memória comprometida, processos (busca, ordenação, tipo observável), consumo do próprio app** | **Novo, não verificado** (sem GPU/disco/temperatura; sem encerrar processos) |
-| **Hardware: inventário com fonte por valor (informado/medido/indisponível) e relatório TXT sem dados pessoais por padrão** | **Novo, não verificado** (módulos de RAM, núcleos físicos, tipo/saúde de disco, taxa do monitor e sensores indisponíveis) |
-| **Inicialização: lista (registro do usuário e do computador, pasta Inicializar), editor, estado, executável ausente; ativar/desativar entradas do USUÁRIO pelo mecanismo do Gerenciador de Tarefas, com backup, verificação, log, conflito e restauração** | **Novo, não verificado** (itens do computador são só leitura; itens que parecem de segurança exigem reconhecimento extra; serviços e tarefas agendadas não cobertos) |
-| **Ferramentas: 14 atalhos para ferramentas nativas (identificados como atalhos) e verificações SFC /verifyonly e DISM /CheckHealth (somente leitura, administrador, cancelável)** | **Novo, não verificado** (nenhum reparo é executado) |
-| Tweaker: planos de energia, rede/DNS, inicialização e serviços | Não iniciado |
-| **Gaming Network (Valorant, Rocket League, Fortnite): ESTIMATIVA INDIRETA via handshake TCP até endpoints regionais públicos da AWS; nunca "Medido"; servidor da partida NÃO é medido** | **Novo, não verificado** (testes com sonda simulada escritos) |
-| **Diagnóstico de rede (gateway ICMP, DNS real, proxy, indícios de VPN) com achados priorizados e limiares fixos** | **Novo, não verificado** (testes escritos) |
-| **Correções de conectividade (cache DNS, DHCP, Winsock, TCP/IP) com confirmação, medição antes/depois e log** | **Novo, não verificado**; exigem administrador; Winsock/TCP/IP exigem reinício e não têm comparação |
-| **Detecção de VPN/proxy por indícios (nunca afirma que a VPN está ativa)** | **Novo, não verificado** |
-| Exportação de relatório de hardware | Novo, não verificado |
-| **Logs: filtros (texto, resultado, categoria, período), exportação TXT/JSON com dados pessoais ocultados por padrão e aviso da ocultação** | **Novo, não verificado** (testes escritos) |
-| **Encerrar programa (Desempenho): fechamento normal → forçado só em 2º passo confirmado; sistema, serviços, segurança, shell e o próprio app são protegidos; tudo registrado** | **Novo, não verificado** (testes com controlador simulado) |
-| Exportação de diagnósticos de rede, gráficos além de CPU/RAM, GPU/temperaturas | Não iniciado (GPU e temperaturas aparecem como indisponíveis) |
-| Instalador / publicação | Não iniciado |
+Evite relatórios longos, explicações técnicas extensas, listas de arquivos modificados e descrições desnecessárias do código.
 
-**Limitações conhecidas**
-- Os valores de registro do Tweaker foram escolhidos de memória a partir do que as Configurações do Windows gravam: valide cada ajuste manualmente (veja `docs/TESTES-MANUAIS.md`).
-- Gaming Network: nenhum dos três jogos tem destino de teste oficial verificado; os destinos usados são nomes de endpoints regionais da AWS (`ec2.<região>.amazonaws.com`, padrão documentado pela AWS, não conferido por mim em tempo real) e o mapeamento jogo→região é aproximado. Serve só como referência de proximidade.
-- Os endereços de DNS em `DnsProfiles` não foram conferidos nas fontes oficiais (`VerifiedAgainstOfficialSource = false`); Control D está omitido.
-- A elevação reinicia o aplicativo inteiro como administrador (escolha explícita do usuário). Um auxiliar elevado só para a operação ainda não existe.
-- Sem sombras nos cards e sem barra de rolagem customizada (custo de renderização em PCs modestos).
-- Glifos de ícone (Segoe MDL2 Assets) escolhidos de memória; algum pode aparecer como quadrado.
-- Cache de download do Windows Update fica fora do Cleaner (exigiria parar serviços); caches de aplicativos (Discord, Teams) ainda não estão incluídos.
+**Só forneça informações técnicas detalhadas quando eu pedir explicitamente.**
 
-**Testes manuais no Windows:** `docs/TESTES-MANUAIS.md`.
+Quero que você dedique o máximo possível do trabalho à implementação, aos testes e à correção de problemas, em vez de produzir relatórios extensos.
 
-## Executar o aplicativo (Windows, .NET 8 SDK)
-    dotnet run --project src/VznBooster.Desktop
+### 2. ATUALIZAÇÃO CONTÍNUA DO ZIP
 
-## Compilar e testar (.NET 8 SDK)
-    dotnet test VznBooster.sln
+Sempre que concluir uma etapa relevante do desenvolvimento:
 
-## Pendências de verificação
-- Endereços DNS em `DnsProfiles` devem ser conferidos nas URLs oficiais (`VerifiedAgainstOfficialSource` = false).
-- Control D omitido até a conferência.
+- Atualize o projeto completo dentro do ZIP.
+- Mantenha o ZIP atualizado com todas as alterações mais recentes.
+- Inclua os arquivos necessários para continuar o desenvolvimento.
+- Não remova funcionalidades existentes nem substitua implementações por versões incompletas.
+- Verifique se o arquivo ZIP foi realmente atualizado antes de disponibilizá-lo.
+- Forneça o link para baixar a versão atualizada.
+
+Não quero precisar solicitar manualmente a atualização do ZIP a cada etapa.
+
+O ZIP deve continuar sendo a versão mais recente do projeto, e não uma versão antiga ou um pacote contendo apenas os arquivos modificados.
+
+### 3. CONTINUE O DESENVOLVIMENTO
+
+Após concluir uma etapa, prossiga para a próxima sem interromper o trabalho apenas para apresentar um relatório.
+
+Siga o planejamento existente, respeite a ordem de prioridades e mantenha o contexto do que já foi implementado.
+
+Se encontrar erros de compilação ou problemas durante os testes, investigue e corrija-os antes de avançar quando isso for necessário para garantir a estabilidade do projeto.
+
+Não considere uma funcionalidade concluída apenas porque o código foi escrito. Valide o que for possível e não declare testes bem-sucedidos sem executá-los.
+
+Se houver um bloqueio real que impeça a continuação, informe-o de maneira breve e objetiva.
+
+### 4. ÚNICO RELATÓRIO NECESSÁRIO AO ATUALIZAR O ZIP
+
+Sempre que disponibilizar uma nova versão do ZIP, apresente somente:
+
+- **ZIP atualizado:** link para baixar.
+- **Etapa atual:** nome da etapa em andamento ou recém-concluída.
+- **Próxima etapa:** o que será desenvolvido em seguida.
+- **Progresso geral:** estimativa percentual de quanto do projeto está concluído.
+- **Falta para terminar:** estimativa do trabalho restante, em etapas ou tarefas principais.
+
+Use este formato:
+
+**ZIP atualizado:** [link para download]
+
+**Etapa atual:** [etapa atual ou concluída]
+
+**Próxima etapa:** [próxima etapa do planejamento]
+
+**Progresso geral:** [percentual estimado]
+
+**Falta para terminar:** [etapas ou tarefas principais restantes]
+
+Não acrescente explicações técnicas, histórico de correções, causas de erros, listas de arquivos alterados ou detalhes de implementação, a menos que eu solicite.
+
+### 5. PROGRESSO REAL, SEM ESTIMATIVAS ENGANOSAS
+
+O percentual deve representar o progresso real do projeto, considerando funcionalidades implementadas, testes, correções e etapas de distribuição.
+
+Não aumente o percentual apenas porque foram escritos muitos arquivos ou linhas de código.
+
+Considere separadamente o que está implementado, o que foi testado e o que ainda precisa ser validado.
+
+A estimativa do trabalho restante deve ser honesta e atualizada conforme o projeto evolui.
+
+### 6. QUANDO O PROJETO ESTIVER CONCLUÍDO
+
+Continue até concluir todas as etapas previstas no planejamento atual, incluindo as funcionalidades, o redesign completo da interface, a compilação, a geração do executável e a criação do instalador, conforme o escopo já definido para o VZN BOOSTER.
+
+Não considere o projeto finalizado enquanto houver tarefas obrigatórias pendentes.
+
+Ao terminar, disponibilize o ZIP final atualizado e os artefatos de distribuição que tiverem sido efetivamente gerados e validados.
+
+**Instrução final:** menos relatórios, mais desenvolvimento. Atualize o ZIP, informe a etapa atual, a próxima etapa, o progresso real e o que falta para terminar. Só entre em detalhes técnicos quando eu pedir.
